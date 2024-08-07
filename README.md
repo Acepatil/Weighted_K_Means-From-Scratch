@@ -65,7 +65,7 @@ Initializes the feature weights `W`.
 
 ### `init_matrixes(m,n,k)`
 
-Initializes the matrices D, U, and W_D used in the algorithm.
+Initializes the matrices `D`, `U`, and `W_D` used in the algorithm.
 
 ### `dist(X, Z, i, j, l)`
 
