@@ -3,12 +3,13 @@
 
 ## Introduction
 
-This project implements the K-Means clustering algorithm from scratch in Python, inspired by the paper "Automated Variable Weighting in k-means Type Clustering" by Huang et al. The implementation includes functions for centroid initialization using the k-means++ method, distance calculation, cluster assignment, centroid updates, and visualization of the clustering process.
+This project implements the Weighted-K-Means clustering algorithm from scratch in Python, inspired by the paper "Automated Variable Weighting in k-means Type Clustering" by Huang et al. The implementation includes functions for centroid initialization using the k-means++ method, distance calculation, cluster assignment, centroid updates, and visualization of the clustering process.
 
 ## Files
 
 - `wk_means.py`: Contains the implementation of the K-Means algorithm and supporting functions.
 - `README.md`: Documentation of the project and explanation of the implementation.
+- `LICENSE.md`: The MIT License for the project.
 
 ## Installation
 
@@ -51,6 +52,7 @@ centroids, W, U = K_Means(n, k, m, X, beta, max_iter)
 print("Centroids:\n", centroids)
 print("Weights:\n", W)
 print("Cluster Assignments:\n", U)
+print("Feature Weights:\n",W)
 ```
 
 ## Functions
