@@ -44,9 +44,7 @@ k = 2
 max_iter = 100
 beta = 0.5
 
-# Run K-M
-
-eans
+# Run K-Means
 centroids, W, U = K_Means(n, k, m, X, beta, max_iter)
 
 print("Centroids:\n", centroids)
