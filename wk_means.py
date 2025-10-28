@@ -13,7 +13,7 @@ def init_centroids_kmeanspp(X, k):
     
     return centroids
 
-def init_matrixes(m,n,k):
+def init_matrices(m,n,k):
     D=np.zeros(m)
     U=np.zeros((n,k))
     W_D=np.zeros((n,k))
@@ -82,7 +82,7 @@ def find_min_D(m,D):
 
 def modify_W(m,beta,W,D):
     if beta==1:
-        find_mn=find_min_D(D,m)
+        find_mn=find_min_D(m,D)
         for j in range(m):
             if j==find_mn:
                 W[j]=1
@@ -90,15 +90,19 @@ def modify_W(m,beta,W,D):
                 W[j]=0
     elif beta<=0 or beta >1:
         for j in range(m):
-            if D[j]==0: W[j]=0
+            if D[j] == 0:
+                W[j] = 0.0
             else:
-                for j in range(m):
-                    if D[j]!=0:
-                        value=0
-                        for i in range(m):
-                            if D[i]!=0:
-                                value+=(D[j]/D[i])**(1/beta-1)
-                        W[j]=1/value
+                denom = 0.0
+                for t in range(m):
+                    if D[t] != 0:
+                        denom += (D[j] / D[t]) ** (1.0 / (beta - 1.0))
+                W[j] = 1.0 / denom
+
+        s = sum(W)
+        if s != 0:
+            for j in range(m):
+                W[j] /= s
     else:
         raise Exception("The value of beta is not valid")
 
@@ -125,18 +129,32 @@ def K_Means(n,k,m,X,beta,max_iter):
     # Random Intialization
     Z=init_centroids_kmeanspp(X,k)
     W=init_weights(m)
-    D,U,W_D=init_matrixes(m,n,k)
+    D,U,W_D=init_matrices(m,n,k)
     # Break Point
     modify_W_D(n,k,m,beta,X,Z,W,W_D)
     modify_U(n,k,U,W_D)
     modify_D(n,k,m,X,U,Z,D)
     modify_W(m,beta,W,D)
     i=0
+    prev_U = np.copy(U)
     while (i<max_iter):
         modify_Z(n,k,m,X,Z,U)
+        for l in range(k):
+            if np.all(U[:, l] == 0):
+                Z[l] = X[np.random.randint(0, n)]
         modify_W_D(n,k,m,beta,X,Z,W,W_D)
         modify_U(n,k,U,W_D)
         modify_D(n,k,m,X,U,Z,D)
-        modify_W(n,k,m,beta,U,Z,W_D,W,D)
-        i+=1
-    return Z,W,i
+        modify_W(m, beta, W, D)
+        if np.array_equal(U, prev_U):
+            print(f"Converged at iteration {i}.")
+            break
+
+        prev_U = np.copy(U)
+        i += 1
+    
+    obj = 0.0
+    for j in range(m):
+        obj += (W[j] ** beta) * D[j]
+    
+    return Z,W,U,i,obj
