@@ -114,15 +114,26 @@ def init_weights(m):
 
 
 def show_clusters(X, cluster, cg):
-    df = DataFrame(dict(x=X[:,0], y=X[:,1], label=cluster))
-    colors = {0:'blue', 1:'orange', 2:'green', 3:'yellow', 4:'black', 5:'pink', 6:'purple'}
+    df = DataFrame(dict(x=X[:, 0], y=X[:, 1], label=cluster))
+    
+    num_clusters = len(np.unique(cluster))
+    cmap = plt.cm.get_cmap('tab20', num_clusters)  # Supports up to 20 unique colors
+    
     fig, ax = plt.subplots(figsize=(8, 8))
-    grouped = df.groupby('label')
-    for key, group in grouped:
-        group.plot(ax=ax, kind='scatter', x='x', y='y', label=key, color=colors[key])
-    ax.scatter(cg[:, 0], cg[:, 1], marker='*', s=150, c='#ff2222')
-    plt.xlabel('X_1')
-    plt.ylabel('X_2')
+    
+    for key in np.unique(cluster):
+        color = cmap(key % 20)  # cycle through colors if >20 clusters
+        points = df[df['label'] == key]
+        ax.scatter(points['x'], points['y'], label=f'Cluster {key}', color=color, s=40)
+    
+    # Plot centroids
+    ax.scatter(cg[:, 0], cg[:, 1], marker='*', s=200, c='red', edgecolors='black', label='Centroids')
+    
+    plt.xlabel('X₁')
+    plt.ylabel('X₂')
+    plt.title(f'K-Means Clustering Result ({num_clusters} Clusters)')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.tight_layout()
     plt.show()
 
 def K_Means(n,k,m,X,beta,max_iter):
